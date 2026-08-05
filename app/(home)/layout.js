@@ -1,6 +1,9 @@
 import Navbar from "@/components/Navbar";
+import { dbConnect } from "@/lib/dbConnect";
 
-export default function HomeLayout({ children }) {
+
+export default async function HomeLayout({ children }) {
+  await dbConnect();
   return (
     <>
       <Navbar />

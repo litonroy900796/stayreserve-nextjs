@@ -1,15 +1,19 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-// Demo credentials — replace with real DB lookup later
-const DEMO_EMAIL = "demo@example.com";
-const DEMO_PASSWORD = "demo1234";
+import bcrypt from "bcryptjs";
+import { userModel } from "./models/user-model";
+import { dbConnect } from "./lib/dbConnect";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "./lib/mongodb";
 
 export const {
   handlers: { GET, POST },
   auth,
 } = NextAuth({
+  adapter: MongoDBAdapter(clientPromise, {
+    databaseName: process.env.ENVIRONMENT,
+  }),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -22,18 +26,28 @@ export const {
           return null;
         }
 
-        if (
-          credentials.username === DEMO_EMAIL &&
-          credentials.password === DEMO_PASSWORD
-        ) {
-          return {
-            id: "1",
-            name: "Demo User",
-            email: DEMO_EMAIL,
-          };
+        await dbConnect();
+
+        const user = await userModel.findOne({ email: credentials.username });
+
+        if (!user) {
+          throw new Error("User not found");
         }
 
-        return null;
+        const isMatch = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
+
+        if (!isMatch) {
+          throw new Error("Email or password mismatch");
+        }
+
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+        };
       },
     }),
     GoogleProvider({
