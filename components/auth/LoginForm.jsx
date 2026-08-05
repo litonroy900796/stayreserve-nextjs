@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const LoginForm = () => {
+const LoginFormInner = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -32,7 +34,7 @@ const LoginForm = () => {
       return;
     }
 
-    router.push("/");
+    router.push(callbackUrl);
   };
 
   return (
@@ -73,5 +75,9 @@ const LoginForm = () => {
     </form>
   );
 };
-
+const LoginForm = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <LoginFormInner />
+  </Suspense>
+);
 export default LoginForm;

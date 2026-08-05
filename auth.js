@@ -6,11 +6,13 @@ import { userModel } from "./models/user-model";
 import { dbConnect } from "./lib/dbConnect";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "./lib/mongodb";
+import { authConfig } from "./auth.config";
 
 export const {
   handlers: { GET, POST },
   auth,
 } = NextAuth({
+  ...authConfig,
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: process.env.ENVIRONMENT,
   }),
@@ -27,21 +29,11 @@ export const {
         }
 
         await dbConnect();
-
         const user = await userModel.findOne({ email: credentials.username });
+        if (!user) throw new Error("User not found");
 
-        if (!user) {
-          throw new Error("User not found");
-        }
-
-        const isMatch = await bcrypt.compare(
-          credentials.password,
-          user.password,
-        );
-
-        if (!isMatch) {
-          throw new Error("Email or password mismatch");
-        }
+        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!isMatch) throw new Error("Email or password mismatch");
 
         return {
           id: user._id.toString(),
@@ -57,8 +49,5 @@ export const {
   ],
   session: {
     strategy: "jwt",
-  },
-  pages: {
-    signIn: "/login",
   },
 });
