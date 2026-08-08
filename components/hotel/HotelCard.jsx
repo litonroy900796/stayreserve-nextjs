@@ -1,7 +1,7 @@
 import Image from "next/image";
 import HotelSummaryInfo from "./HotelSummaryInfo";
 
-const HotelCard = ({ hotel }) => {
+const HotelCard = ({ hotel, destination, checkin, checkout }) => {
   console.log("HotelCard", hotel);
   return (
     <div className="flex gap-6 border border-gray/20 p-4 rounded-md">
@@ -12,7 +12,7 @@ const HotelCard = ({ hotel }) => {
         width={240}
         height={162}
       />
-      <HotelSummaryInfo info={hotel} fromListPage={true} />
+      <HotelSummaryInfo info={hotel} fromListPage={true} destination={destination} checkin={checkin} checkout={checkout} />
     </div>
   );
 };

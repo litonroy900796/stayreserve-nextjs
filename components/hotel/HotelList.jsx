@@ -12,7 +12,7 @@ const HotelList = async ({ destination, checkin, checkout }) => {
             কোনো হোটেল পাওয়া যায়নি এই সার্চের জন্য।
           </p>
         ) : (
-          hotels.map((hotel) => <HotelCard key={hotel.id} hotel={hotel} />)
+          hotels.map((hotel) => <HotelCard key={hotel.id} hotel={hotel} destination={destination} checkin={checkin} checkout={checkout} />)
         )}
       </div>
     </div>

@@ -4,17 +4,22 @@ import Summary from '@/components/hotel/details/Summary';
 import { getHotelById } from '@/lib/queries/hotels-query';
 import { notFound } from 'next/navigation';
 
-async function HotelDetails({ params }) {
-  const { id } = await params;
-  const hotelInfo = await getHotelById(id);
-
+async function HotelDetails({ searchParams }) {
+  const { searchId,checkin,checkout } = await searchParams;
+  const hotelInfo = await getHotelById(searchId);
+  
   if (!hotelInfo) {
     notFound();
   }
 
   return (
     <div>
-      <Summary hotelInfo={hotelInfo} />
+      <Summary
+        hotelInfo={hotelInfo}
+        searchId={searchId}
+        checkin={checkin}
+        checkout={checkout}
+      />
       <Gallery gallery={hotelInfo?.gallery} />
       <Overview overview={hotelInfo?.overview} />
     </div>
