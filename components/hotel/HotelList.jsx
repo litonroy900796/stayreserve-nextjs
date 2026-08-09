@@ -1,8 +1,8 @@
 import { getAllHotels } from "@/lib/queries/hotels-query";
 import HotelCard from "./HotelCard";
 
-const HotelList = async ({ destination, checkin, checkout }) => {
-  const hotels = await getAllHotels({ destination, checkin, checkout });
+const HotelList = async ({ destination, checkin, checkout, sort, price, stars, amenities }) => {
+  const hotels = await getAllHotels({ destination, checkin, checkout, sort, price, stars, amenities });
 
   return (
     <div className="col-span-9">
