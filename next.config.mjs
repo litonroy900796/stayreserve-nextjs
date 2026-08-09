@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "a0.muscache.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
     ],
   },
 };
